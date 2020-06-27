@@ -5,8 +5,11 @@ import android.provider.ContactsContract
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 private const val TAG = "MainActivity"
 
@@ -20,12 +23,26 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener { view ->
             Log.d(TAG, "fab onClick: starts")
 
+            //creating an array to store strings of column names we need to access, only 1 in this case
             val projection = arrayOf (ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+            //making a query to the ContentResolver to access the contacts database, returns a cursor with the requested data
             val cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
                                                 projection,
                                                 null,
                                                 null,
                                                 ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+
+            //getting all contacts into an array list
+            val contacts = ArrayList<String>()
+            cursor?.use {
+                while (it.moveToNext()) {
+                    contacts.add(it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)))
+                }
+            }
+
+            //using ArrayAdapter to display contacts in the ListView
+            val adapter = ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
+            contactNames.adapter = adapter
 
             Log.d(TAG, "fab onClick: ends")
         }
