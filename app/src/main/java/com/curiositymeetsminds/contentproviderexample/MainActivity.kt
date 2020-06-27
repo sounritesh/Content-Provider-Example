@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             //using ArrayAdapter to display contacts in the ListView
+            //id is optional,just the layout name is enough
             val adapter = ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
             contactNames.adapter = adapter
 
