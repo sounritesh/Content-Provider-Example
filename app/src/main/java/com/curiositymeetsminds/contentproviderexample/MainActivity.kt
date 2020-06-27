@@ -1,12 +1,14 @@
 package com.curiositymeetsminds.contentproviderexample
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
+import android.provider.ContactsContract
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+
+private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,8 +18,16 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            Log.d(TAG, "fab onClick: starts")
+
+            val projection = arrayOf (ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+            val cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
+                                                projection,
+                                                null,
+                                                null,
+                                                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+
+            Log.d(TAG, "fab onClick: ends")
         }
     }
 
