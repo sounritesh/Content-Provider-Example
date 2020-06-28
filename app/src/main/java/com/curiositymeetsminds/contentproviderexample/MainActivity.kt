@@ -1,24 +1,40 @@
 package com.curiositymeetsminds.contentproviderexample
 
+import android.Manifest.permission.READ_CONTACTS
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 private const val TAG = "MainActivity"
+private const val READ_CONTACTS_REQUEST_CODE = 1
 
 class MainActivity : AppCompatActivity() {
 
+    private var readGranted = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate: starts")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        val hasReadContactPermission = ContextCompat.checkSelfPermission(this, READ_CONTACTS)
+        Log.d(TAG, "onCreate: checkSelfPermission returned $hasReadContactPermission")
+
+        if(hasReadContactPermission == PackageManager.PERMISSION_GRANTED){
+            Log.d(TAG, "onCreate: Permission granted")
+        } else {
+            Log.d(TAG, "onCreate: Requesting permission")
+            ActivityCompat.requestPermissions(this, arrayOf(READ_CONTACTS), READ_CONTACTS_REQUEST_CODE)
+        }
 
         fab.setOnClickListener { view ->
             Log.d(TAG, "fab onClick: starts")
@@ -47,6 +63,28 @@ class MainActivity : AppCompatActivity() {
 
             Log.d(TAG, "fab onClick: ends")
         }
+
+        Log.d(TAG, "onCreate: ends")
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        Log.d(TAG, "onRequestPermissionsResult: starts")
+        when (requestCode) {
+            READ_CONTACTS_REQUEST_CODE -> {
+                readGranted = if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "onRequestPermissionsResult: Permission granted")
+                    true
+                } else {
+                    Log.d(TAG, "onRequestPermissionsResult: Permission refused")
+                    false
+                }
+            }
+        }
+        Log.d(TAG, "onRequestPermissionsResult: ends")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
