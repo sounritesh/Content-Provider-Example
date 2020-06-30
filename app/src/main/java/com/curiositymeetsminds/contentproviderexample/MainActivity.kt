@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -38,28 +39,33 @@ class MainActivity : AppCompatActivity() {
 
         fab.setOnClickListener { view ->
             Log.d(TAG, "fab onClick: starts")
+            if (readGranted) {
+                //creating an array to store strings of column names we need to access, only 1 in this case
+                val projection = arrayOf (ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+                //making a query to the ContentResolver to access the contacts database, returns a cursor with the requested data
+                val cursor = contentResolver.query(
+                    ContactsContract.Contacts.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
-            //creating an array to store strings of column names we need to access, only 1 in this case
-            val projection = arrayOf (ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
-            //making a query to the ContentResolver to access the contacts database, returns a cursor with the requested data
-            val cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
-                                                projection,
-                                                null,
-                                                null,
-                                                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
-
-            //getting all contacts into an array list
-            val contacts = ArrayList<String>()
-            cursor?.use {
-                while (it.moveToNext()) {
-                    contacts.add(it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)))
+                //getting all contacts into an array list
+                val contacts = ArrayList<String>()
+                cursor?.use {
+                    while (it.moveToNext()) {
+                        contacts.add(it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)))
+                    }
                 }
-            }
 
-            //using ArrayAdapter to display contacts in the ListView
-            //id is optional,just the layout name is enough
-            val adapter = ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
-            contactNames.adapter = adapter
+                //using ArrayAdapter to display contacts in the ListView
+                //id is optional,just the layout name is enough
+                val adapter = ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
+                contactNames.adapter = adapter
+            } else {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            }
 
             Log.d(TAG, "fab onClick: ends")
         }
@@ -82,6 +88,9 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "onRequestPermissionsResult: Permission refused")
                     false
                 }
+//                disable the floating action button if permission is not granted so
+//                so the app does not crash when the user tries to click the fab
+//                fab.isEnabled = readGranted
             }
         }
         Log.d(TAG, "onRequestPermissionsResult: ends")
