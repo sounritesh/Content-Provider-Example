@@ -38,10 +38,15 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "onCreate: checkSelfPermission returned $hasReadContactPermission")
 
-        if(hasReadContactPermission == PackageManager.PERMISSION_GRANTED){
-            Log.d(TAG, "onCreate: Permission granted")
-        } else {
-            Log.d(TAG, "onCreate: Requesting permission")
+//        if(hasReadContactPermission == PackageManager.PERMISSION_GRANTED){
+//            Log.d(TAG, "onCreate: Permission granted")
+//        } else {
+//            Log.d(TAG, "onCreate: Requesting permission")
+//            ActivityCompat.requestPermissions(this, arrayOf(READ_CONTACTS), READ_CONTACTS_REQUEST_CODE)
+//        }
+
+        if (hasReadContactPermission == PackageManager.PERMISSION_DENIED) {
+            Log.d(TAG, "onCreate: requesting permission")
             ActivityCompat.requestPermissions(this, arrayOf(READ_CONTACTS), READ_CONTACTS_REQUEST_CODE)
         }
 
@@ -98,29 +103,34 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: ends")
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        Log.d(TAG, "onRequestPermissionsResult: starts")
-        when (requestCode) {
-            READ_CONTACTS_REQUEST_CODE -> {
-//                readGranted = if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "onRequestPermissionsResult: Permission granted")
-//                    true
-                } else {
-                    Log.d(TAG, "onRequestPermissionsResult: Permission refused")
-//                    false
-                }
-//                disable the floating action button if permission is not granted so
-//                so the app does not crash when the user tries to click the fab
-//                fab.isEnabled = readGranted
-            }
-        }
-        Log.d(TAG, "onRequestPermissionsResult: ends")
-    }
+//    The entire function has been commented because it was only used for logging once the readGranted variable was removed
+//    However this implementation is useful for disabling a secondary feature that does not work without a permission
+//    It is also useful to give the user some context to explain why the permission is required and what will be the consequences if it
+//    is not granted.
+
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        Log.d(TAG, "onRequestPermissionsResult: starts")
+//        when (requestCode) {
+//            READ_CONTACTS_REQUEST_CODE -> {
+////                readGranted = if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Log.d(TAG, "onRequestPermissionsResult: Permission granted")
+////                    true
+//                } else {
+//                    Log.d(TAG, "onRequestPermissionsResult: Permission refused")
+////                    false
+//                }
+////                disable the floating action button if permission is not granted so
+////                so the app does not crash when the user tries to click the fab
+////                fab.isEnabled = readGranted
+//            }
+//        }
+//        Log.d(TAG, "onRequestPermissionsResult: ends")
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
