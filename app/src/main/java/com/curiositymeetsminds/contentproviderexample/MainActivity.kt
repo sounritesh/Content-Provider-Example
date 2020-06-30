@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                 val adapter = ArrayAdapter<String>(this, R.layout.contact_detail, R.id.name, contacts)
                 contactNames.adapter = adapter
             } else {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Please grant permission to access your contacts.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
             }
 
